@@ -10,10 +10,12 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 
 class GraphBuilder():
-    def __init__(self): 
-        pass
+    def __init__(self):
+        self.tools = []
+        self.system_prompat  = SYSTEM_PROMPT 
+        
 
-    def agent_framework(self,state):
+    def agent_framework(self,state:MessagesState    ):
         """Main agent function"""
 
         user_question = state["messages"]
@@ -37,5 +39,5 @@ class GraphBuilder():
         
 
     def __call__(self):
-        pass
+        return self.build_graph()
 
