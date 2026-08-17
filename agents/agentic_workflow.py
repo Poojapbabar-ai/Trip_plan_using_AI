@@ -3,16 +3,38 @@ from utils.model_loader import ModelLoader
 from prompat_library.prompat import SYSTEM_PROMPT 
 from langgraph.graph import StateGraph, MessagesState , END, START
 from langgraph.prebuilt import ToolNode, tools_condition
-
+from tool.weather_info_tool import WeatherInfoTool
+from tool.place_search_tool import PlaceSearchTool
+from tool.expense_calculator_tool import CalculatorTool
+from tool.currency_conversion_tool import CurrencyConverterTool
 
 
 
 
 
 class GraphBuilder():
-    def __init__(self):
+    def __init__(self,model_provider = "groq"):
+        # self.tools = []
+        # self.system_prompat  = SYSTEM_PROMPT 
+        self.model_loader = ModelLoader(model_provider= model_provider)
+        self.llm = self.model_loader.load_llm()
         self.tools = []
-        self.system_prompat  = SYSTEM_PROMPT 
+        self.weather_tools = WeatherInfoTool()
+        self.place_search_tools = PlaceSearchTool()
+        self.calculator_tools = CalculatorTool()
+        self.currency_converter_tool = CurrencyConverterTool()
+
+
+        self.tools.extend([* self.weather_tools.weather_tool_list,
+                            * self.place_search_tools.place_search_tool_list,
+                            * self.calculator_tools.calculator_tool_list,
+                            * self.currency_converter_tool.currency_converter_tool_list])
+
+
+        self.llm_with_tools = self.llm.bind_tools(tools=self.tools)
+        self.graph = None
+
+        self.system_prompat = SYSTEM_PROMPT
         
 
     def agent_framework(self,state:MessagesState    ):

@@ -10,6 +10,10 @@ wheels/
 .venv
 
 
+notebook/
+*.ipynb
+.env
+
 env
 .env
 
