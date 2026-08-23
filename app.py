@@ -2,6 +2,7 @@ import streamlit as st
 import datetime
 import requests
 import sys
+from utils.save_to_document import save_document
 
 BASE_URL = "http://localhost:8000" #backend point 
 
@@ -39,10 +40,12 @@ with  st.form(key = "query_form",clear_on_submit=True):
 
             if response.status_code ==200:
                 answer = response.json().get("answer","No answer returned")
+                st.session_state.answer = answer
+                st.session_state.document_path = save_document(answer)
                 markdown_content = f"""# AI Travel Plan
 
-                #**Generated:** {datetime.datetime.now().strftime('%Y-%m-%d at %H:%M')}
-                #**Created by:** Atriyo's Travel Agent 
+                **Generated:** {datetime.datetime.now().strftime('%Y-%m-%d at %H:%M')}  
+                **Created by:** Atriyo's Travel Agent
                 ---
                 {answer}
 
@@ -57,6 +60,17 @@ with  st.form(key = "query_form",clear_on_submit=True):
             st.error(f"Could not reach the backend at {BASE_URL}: {e}")
         except Exception as e:
             st.error(f"The response failed: {e}")
+
+if st.session_state.get("document_path"):
+    document_path = st.session_state.document_path
+    if document_path:
+        with open(document_path, "rb") as document_file:
+            st.download_button(
+                "Download travel plan",
+                data=document_file.read(),
+                file_name=document_path.replace("\\", "/").split("/")[-1],
+                mime="text/markdown",
+            )
 
 
 

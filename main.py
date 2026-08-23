@@ -32,7 +32,15 @@ async def query_travel_agent(query:QueryRequest):
 
 
         if isinstance(output, dict) and "messages" in output:
-            final_output = output["messages"][-1].content
+            final_output = next(
+                (
+                    message.content
+                    for message in reversed(output["messages"])
+                    if getattr(message, "content", None)
+                    and not getattr(message, "tool_calls", None)
+                ),
+                "No answer was returned by the travel agent.",
+            )
         else:
             final_output = str(output)
 
