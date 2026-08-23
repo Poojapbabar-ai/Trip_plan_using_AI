@@ -6,9 +6,12 @@ from langchain_google_community import GooglePlacesTool, GooglePlacesAPIWrapper
 
 
 class GooglePlaceSearchTool:
-    def __init__(self,api_key :str):
-        self.places_wrapper  = GooglePlacesAPIWrapper(gplaces_api_key=api_key)
-        self.places_tool  = GooglePlacesTool(api_wrapper=self.places_wrapper)
+    def __init__(self, api_key: str | None):
+        self.places_wrapper = None
+        self.places_tool = None
+        if api_key:
+            self.places_wrapper = GooglePlacesAPIWrapper(gplaces_api_key=api_key)
+            self.places_tool = GooglePlacesTool(api_wrapper=self.places_wrapper)
 
 
 

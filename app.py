@@ -53,8 +53,10 @@ with  st.form(key = "query_form",clear_on_submit=True):
             else:
                 st.error("Bot failed to respond: " +response.text)
 
+        except requests.RequestException as e:
+            st.error(f"Could not reach the backend at {BASE_URL}: {e}")
         except Exception as e:
-            raise f"The Response failed due to {e}"
+            st.error(f"The response failed: {e}")
 
 
 
